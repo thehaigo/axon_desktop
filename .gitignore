@@ -36,3 +36,6 @@ npm-debug.log
 
 # The directory NPM downloads your dependencies sources to.
 /assets/node_modules/
+
+# Ignore generated js hook files for components
+assets/js/_hooks/

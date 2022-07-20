@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -12,9 +12,7 @@ config :todo_app, TodoWeb.Endpoint,
   check_origin: false,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    sass:
-      {DartSass, :install_and_run,
-       [:default, ~w(--embed-source-map --source-map-urls=absolute --watch)]}
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ],
   # Watch static and templates for browser reloading.
   live_reload: [

@@ -1,12 +1,15 @@
 /* This file is for your main application css. */
 @use "../node_modules/nprogress/nprogress.css";
-@import "./todo.scss";
+/* @import "./todo.scss"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* LiveView specific classes for your customizations */
 .invalid-feedback {
   color: #a94442;
   display: block;
-  // margin: -1rem 0 2rem;
+  margin: -1rem 0 2rem;
 }
 
 .phx-no-feedback.invalid-feedback, .phx-no-feedback .invalid-feedback {
