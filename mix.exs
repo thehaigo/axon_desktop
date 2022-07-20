@@ -47,7 +47,7 @@ defmodule Todo.MixProject do
       "assets.deploy": [
         "phx.digest.clean --all",
         "esbuild default --minify",
-        "sass default --no-source-map --style=compressed",
+        "tailwind default --minify",
         "phx.digest"
       ]
     ]
@@ -62,7 +62,7 @@ defmodule Todo.MixProject do
 
       # Phoenix
       {:phoenix, "~> 1.6"},
-      {:phoenix_live_view, "~> 0.16"},
+      {:phoenix_live_view, "~> 0.17.4"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.3", only: [:dev]},
       {:gettext, "~> 0.18"},
@@ -71,10 +71,18 @@ defmodule Todo.MixProject do
 
       # Assets
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:dart_sass, "~> 0.2", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
+      {:petal_components, "~> 0.17"},
 
       # Credo
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+
+      # ml
+      {:axon_onnx, github: "elixir-nx/axon_onnx"},
+      {:exla, "~> 0.3.0-dev", github: "elixir-nx/nx", sparse: "exla"},
+      {:nx, "~> 0.3.0-dev",
+       [env: :prod, git: "https://github.com/elixir-nx/nx.git", sparse: "nx", override: true]},
+      {:stb_image, "~> 0.4.0"}
     ]
   end
 end
