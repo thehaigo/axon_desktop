@@ -6,43 +6,50 @@ defmodule TodoWeb.TodoLive do
   use TodoWeb, :live_view
 
   @impl true
+  def mount(_params, _session, socket) do
+    socket =
+      socket
+      |> assign(:list, File.read!("model/classlist.json") |> Jason.decode!())
+      |> assign(:upload_file, nil)
+      |> assign(:ans, [])
+      |> allow_upload(
+        :image,
+        accept: :any,
+        chunk_size: 6400_000,
+        progress: &handle_progress/3,
+        auto_upload: true
+      )
 
-  def mount(_args, _session, socket) do
-    todos = TodoApp.Todo.all_todos()
-    TodoApp.Todo.subscribe()
-    {:ok, assign(socket, todos: todos)}
+    {:ok, socket}
+  end
+
+  def handle_progress(:image, _entry, socket) do
+    upload_file =
+      consume_uploaded_entries(socket, :image, fn %{path: path}, _entry ->
+        File.read(path)
+      end)
+      |> List.first()
+
+    {:noreply, assign(socket, :upload_file, upload_file)}
   end
 
   @impl true
-  def handle_info(:changed, socket) do
-    todos = TodoApp.Todo.all_todos()
-    {:noreply, assign(socket, todos: todos)}
+  def handle_event("validate", _params, socket) do
+    {:noreply, socket}
   end
 
   @impl true
-  def handle_event("add", %{"text" => ""}, socket) do
-    {:noreply, socket}
+  def handle_event("detect", _params, %{assigns: %{upload_file: binary}} = socket) do
+    {:noreply, assign(socket, :ans, TodoApp.Worker.detect(binary))}
   end
 
-  def handle_event("add", %{"text" => text}, socket) do
-    TodoApp.Todo.add_todo(text, "todo")
+  @impl true
+  def handle_event("clear", _params, socket) do
+    socket =
+      socket
+      |> assign(:upload_file, nil)
+      |> assign(:ans, [])
 
-    Desktop.Window.show_notification(TodoWindow, "Added todo: #{text}",
-      callback: &notification_event/1
-    )
-
-    {:noreply, socket}
-  end
-
-  def handle_event("toggle", %{"id" => id}, socket) do
-    id = String.to_integer(id)
-    TodoApp.Todo.toggle_todo(id)
-    {:noreply, socket}
-  end
-
-  def handle_event("drop", %{"id" => id}, socket) do
-    id = String.to_integer(id)
-    TodoApp.Todo.drop_todo(id)
     {:noreply, socket}
   end
 

@@ -1,0 +1,39 @@
+<div class="flex items-start justify-between pt-4 h-screen">
+  <div class="relative w-60 mr-4 h-full mb-4">
+    <.card class="h-5/6">
+      <.card_content category="Actions">
+          <.button class="m-1 w-full" label="Detect" phx-click="detect" variant="shadow" />
+          <.button class="m-1 w-full" label="Clear" color="white" variant="shadow" phx-click="clear" />
+        <%= for {ans, index} <- Enum.with_index(@ans) do %>
+          <h5><%= "#{index + 1}: " <> Map.get(@list, to_string(ans)) %></h5>
+        <% end %>
+      </.card_content>
+    </.card>
+  </div>
+  <div class="flex flex-col w-full pr-4 h-full">
+    <.card class="h-5/6">
+      <.card_content class="p-4">
+        <div style={ if @upload_file != nil, do: "display:none" }>
+          <form phx-change="validate" >
+            <div class="border border-dashed border-gray-500 relative"
+            phx-drop-target={@uploads.image.ref}
+            >
+              <%= live_file_input @uploads.image, class: "cursor-pointer relative block opacity-0 w-full h-full p-20 z-50" %>
+              <div class="text-center p-10 absolute top-0 right-0 left-0 m-auto">
+              <h4>
+                Drop files anywhere to upload
+              <br/>or
+              </h4>
+              <p class="">Select Files</p>
+              </div>
+            </div>          
+          </form>
+        </div>
+        <%= if @upload_file do %>
+          <div class="w-full h-full mb-4">
+            <img alt="" class="object-cover" src={"data:image/png;base64,#{Base.encode64(@upload_file)}"}/></div>
+        <% end %>
+      </.card_content>
+    </.card>
+  </div>
+</div>
